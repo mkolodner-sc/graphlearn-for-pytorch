@@ -67,8 +67,12 @@ def to_hetero_data(
 ) -> HeteroData:
   data = HeteroData(**kwargs)
   edge_index_dict = hetero_sampler_out.get_edge_index()
-  num_hops = max(map(
-    lambda x: len(x), list(hetero_sampler_out.num_sampled_edges.values())))
+  if hetero_sampler_out.num_sampled_edges:
+    num_hops = max(map(
+      lambda x: len(x), list(hetero_sampler_out.num_sampled_edges.values()))
+    )
+  else:
+    num_hops = 0
   # edges
   for k, v in edge_index_dict.items():
     data[k].edge_index = v

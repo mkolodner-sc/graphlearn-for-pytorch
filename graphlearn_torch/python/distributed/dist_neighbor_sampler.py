@@ -381,16 +381,28 @@ class DistNeighborSampler(ConcurrentEventLoop):
         num_sampled_edges.append(cols.size(0))
         srcs = nodes
 
-      sample_output = SamplerOutput(
-        node=torch.cat(out_nodes),
-        row=torch.cat([e[0] for e in out_edges]),
-        col=torch.cat([e[1] for e in out_edges]),
-        edge=(torch.cat([e[2] for e in out_edges]) if self.with_edge else None),
-        batch=batch,
-        num_sampled_nodes=num_sampled_nodes,
-        num_sampled_edges=num_sampled_edges,
-        metadata={}
-      )
+      if not out_edges:
+        sample_output = SamplerOutput(
+          node=torch.cat(out_nodes),
+          row=torch.tensor([]).to(self.device),
+          col=torch.tensor([]).to(self.device),
+          edge=(torch.tensor([]).to(self.device) if self.with_edge else None),
+          batch=batch,
+          num_sampled_nodes=num_sampled_nodes,
+          num_sampled_edges=num_sampled_edges,
+          metadata={}
+        )
+      else:
+        sample_output = SamplerOutput(
+          node=torch.cat(out_nodes),
+          row=torch.cat([e[0] for e in out_edges]) if out_edges else torch.tensor([]),
+          col=torch.cat([e[1] for e in out_edges]) if out_edges else torch.tensor([]),
+          edge=(torch.cat([e[2] for e in out_edges]) if self.with_edge else None),
+          batch=batch,
+          num_sampled_nodes=num_sampled_nodes,
+          num_sampled_edges=num_sampled_edges,
+          metadata={}
+        )
     # Reclaim inducer into pool.
     self.inducer_pool.put(inducer)
 
