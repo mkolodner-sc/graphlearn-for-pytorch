@@ -386,7 +386,7 @@ class DistNeighborSampler(ConcurrentEventLoop):
           node=torch.cat(out_nodes),
           row=torch.tensor([]).to(self.device),
           col=torch.tensor([]).to(self.device),
-          edge=(torch.tensor([]).to(self.device) if self.with_edge else None),
+          edge=torch.tensor([]).to(self.device) if self.with_edge else None,
           batch=batch,
           num_sampled_nodes=num_sampled_nodes,
           num_sampled_edges=num_sampled_edges,
